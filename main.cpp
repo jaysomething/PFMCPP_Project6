@@ -54,72 +54,89 @@ Create a branch named Part1
 
 #include <iostream>
 #include <string>
+#include <cmath>
+
 struct T
 {
-    T(<#type name#> v, const char* <#variable name#>)   //1
-    //2
-    //3
+    T(float v, const char* n) : value(v), name(n) {}
+    float value;
+    std::string name;
 };
 
-struct <#structName1#>                                //4
+struct Compare
 {
-    <#type name#> compare(<#type name#> a, <#type name#> b) //5
+    T* compare(T* a, T* b)
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if(a != nullptr && b != nullptr)
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
 
 struct U
 {
-    float <#name1#> { 0 }, <#name2#> { 0 };
-    <#returnType#> <#memberFunction#>(<#type name#>* <#updatedValue#>)      //12
+    float x { 0 }, y { 0 };
+    float uFunc(float* update)
     {
-        
+        if(update != nullptr)
+        {
+            std::cout << "U's x value: " << x << std::endl;
+            x = *update;
+            std::cout << "U's x updated value: " << x << std::endl;
+
+            while( std::abs(y - x) > 0.001f )
+            {
+                y += (std::abs(y - x))/2;
+            }
+            std::cout << "U's y updated value: " << y << std::endl;
+            return y * x;
+        }
+        std::cout << "Argument is a nullptr. Returning 0\n";
+        return 0.0f;
     }
 };
 
-struct <#structname2#>
+struct S2
 {
-    static <#returntype#> <#staticFunctionA#>(U* that, <#type name#>* <#updatedValue#> )        //10
+    static float s2Func(U* that, float* update)
     {
-        std::cout << "U's <#name1#> value: " << that-><#name1#> << std::endl;
-        that-><#name1#> = <#updatedValue#>;
-        std::cout << "U's <#name1#> updated value: " << that-><#name1#> << std::endl;
-        while( std::abs(that-><#name2#> - that-><#name1#>) > 0.001f )
+        if(that != nullptr && update != nullptr)
         {
-            /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
-             */
-            that-><#name2#> += ;
+            std::cout << "U's x value: " << that->x << std::endl;
+            that->x = *update;
+            std::cout << "U's x updated value: " << that->x << std::endl;
+            while( std::abs(that->y - that->x) > 0.001f )
+            {
+                that->y += (std::abs(that->y - that->x))/2;
+            }
+            //
+            std::cout << "U's y updated value: " << that->y << std::endl;
+            return that->y * that->x;
         }
-        std::cout << "U's <#name2#> updated value: " << that-><#name2#> << std::endl;
-        return that-><#name2#> * that-><#name1#>;
+        std::cout << "Arguments contain nullptrs. Returning 0\n";
+        return 0.0f;
     }
 };
         
 int main()
 {
-    T <#name1#>( , );                                             //6
-    T <#name2#>( , );                                             //6
+    T one( 1, "one");
+    T two( 2, "two");
     
-    <#structName1#> f;                                            //7
-    auto* smaller = f.compare( , );                              //8
-    std::cout << "the smaller one is << " << smaller->name << std::endl; //9
+    Compare f;
+    auto* smaller = f.compare(&one, &two);
+    if (smaller != nullptr)
+    {
+        std::cout << "the smaller one is << " << smaller->name << std::endl;
+    }  
     
-    U <#name3#>;
+    U u3;
     float updatedValue = 5.f;
-    std::cout << "[static func] <#name3#>'s multiplied values: " << <#structname2#>::<#staticFunctionA#>( , ) << std::endl;                  //11
+    std::cout << "[static func] u1's multiplied values: " << S2::s2Func(&u3, &updatedValue) << std::endl;
     
-    U <#name4#>;
-    std::cout << "[member func] <#name4#>'s multiplied values: " << <#name4#>.<#memberFunction#>( &updatedValue ) << std::endl;
+    U u4;
+    std::cout << "[member func] u4's multiplied values: " << u4.uFunc( &updatedValue ) << std::endl;
 }
-
-        
-        
-        
-        
-        
-        
-        
