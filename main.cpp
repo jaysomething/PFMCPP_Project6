@@ -33,13 +33,12 @@ struct T
 
 struct Compare
 {
-    T* compare(T* a, T* b)
+    T* compare(T& a, T& b)
     {
-        if(a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+        if (a.value < b.value) 
+            return &a;
+        if (a.value > b.value) 
+            return &b;
         return nullptr;
     }
 };
@@ -47,45 +46,35 @@ struct Compare
 struct U
 {
     float x { 0 }, y { 0 };
-    float uFunc(float* update)
+    float uFunc(const float& update)
     {
-        if(update != nullptr)
-        {
-            std::cout << "U's x value: " << x << std::endl;
-            x = *update;
-            std::cout << "U's x updated value: " << x << std::endl;
+        std::cout << "U's x value: " << x << std::endl;
+        x = update;
+        std::cout << "U's x updated value: " << x << std::endl;
 
-            while( std::abs(y - x) > 0.001f )
-            {
-                y += (std::abs(y - x))/2;
-            }
-            std::cout << "U's y updated value: " << y << std::endl;
-            return y * x;
+        while( std::abs(y - x) > 0.001f )
+        {
+            y += (std::abs(y - x))/2;
         }
-        std::cout << "Argument is a nullptr. Returning 0\n";
-        return 0.0f;
+        std::cout << "U's y updated value: " << y << std::endl;
+        return y * x;
     }
 };
 
 struct S2
 {
-    static float s2Func(U* that, float* update)
+    static float s2Func(U& that, const float& update)
     {
-        if(that != nullptr && update != nullptr)
+        std::cout << "U's x value: " << that.x << std::endl;
+        that.x = update;
+        std::cout << "U's x updated value: " << that.x << std::endl;
+        while( std::abs(that.y - that.x) > 0.001f )
         {
-            std::cout << "U's x value: " << that->x << std::endl;
-            that->x = *update;
-            std::cout << "U's x updated value: " << that->x << std::endl;
-            while( std::abs(that->y - that->x) > 0.001f )
-            {
-                that->y += (std::abs(that->y - that->x))/2;
-            }
-            //
-            std::cout << "U's y updated value: " << that->y << std::endl;
-            return that->y * that->x;
+            that.y += (std::abs(that.y - that.x))/2;
         }
-        std::cout << "Arguments contain nullptrs. Returning 0\n";
-        return 0.0f;
+        //
+        std::cout << "U's y updated value: " << that.y << std::endl;
+        return that.y * that.x;
     }
 };
         
@@ -95,16 +84,16 @@ int main()
     T two( 2, "two");
     
     Compare f;
-    auto* smaller = f.compare(&one, &two);
+    auto* smaller = f.compare(one, two);
     if (smaller != nullptr)
     {
         std::cout << "the smaller one is << " << smaller->name << std::endl;
     }  
     
     U u3;
-    float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: " << S2::s2Func(&u3, &updatedValue) << std::endl;
+    float updatedValue = 5.0f;
+    std::cout << "[static func] u3's multiplied values: " << S2::s2Func(u3, updatedValue) << std::endl;
     
     U u4;
-    std::cout << "[member func] u4's multiplied values: " << u4.uFunc( &updatedValue ) << std::endl;
+    std::cout << "[member func] u4's multiplied values: " << u4.uFunc( updatedValue ) << std::endl;
 }
